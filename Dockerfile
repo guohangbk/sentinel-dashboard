@@ -1,4 +1,4 @@
-FROM registry.cn-shanghai.aliyuncs.com/ikea-cr/openjdk:8-jdk-alpine
+From openjdk:8
 
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
