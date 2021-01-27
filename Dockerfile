@@ -1,9 +1,16 @@
+# First stage: complete build environment
+FROM maven:3.5.0-jdk-8-alpine AS builder
+
+# add pom.xml and source code
+ADD ./pom.xml pom.xml
+ADD ./src src/
+
+# package jar
+RUN mvn install -Dmaven.test.skip=true
+
 From openjdk:8
 
-ENV TZ=Asia/Shanghai
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-COPY ./build/libs/*.jar /app/app.jar
-ENV RUNENV=""
-ENV JVMARG=""
-ENTRYPOINT ["sh","-c","java -server -jar $JVMARG -Duser.timezone=GMT+08 /app/app.jar --spring.profiles.active=$RUNENV"]
+# copy jar from the first stage
+COPY --from=builder target/*.jar my-app-1.0-SNAPSHOT.jar
+EXPOSE 8080
+CMD ["java", "-jar", "my-app-1.0-SNAPSHOT.jar"]
