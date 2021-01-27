@@ -1,16 +1,9 @@
-# First stage: complete build environment
-FROM maven:3.5.0-jdk-8-alpine AS builder
+FROM registry.cn-shanghai.aliyuncs.com/ikea-cr/openjdk:8-jdk-alpine
 
-# add pom.xml and source code
-ADD ./pom.xml pom.xml
-ADD ./src src/
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# package jar
-RUN mvn install -Dmaven.test.skip=true
-
-From openjdk:8
-
-# copy jar from the first stage
-COPY ./build/libs/*.jar sentinel-dashboard-1.8.0-SNAPSHOT.jar
-EXPOSE 8080
-CMD ["java", "-jar", "sentinel-dashboard-1.8.0-SNAPSHOT.jar"]
+COPY ./build/libs/*.jar /app/app.jar
+ENV RUNENV=""
+ENV JVMARG=""
+ENTRYPOINT ["sh","-c","java -server -jar $JVMARG -Duser.timezone=GMT+08 /app/app.jar --spring.profiles.active=$RUNENV"]
