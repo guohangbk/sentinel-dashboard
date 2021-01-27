@@ -11,6 +11,6 @@ RUN mvn install -Dmaven.test.skip=true
 From openjdk:8
 
 # copy jar from the first stage
-COPY --from=builder target/sentinel-dashboard-1.8.0-SNAPSHOT.jar sentinel-dashboard-1.8.0-SNAPSHOT.jar
+COPY ./build/libs/*.jar sentinel-dashboard-1.8.0-SNAPSHOT.jar
 EXPOSE 8080
 CMD ["java", "-jar", "sentinel-dashboard-1.8.0-SNAPSHOT.jar"]
