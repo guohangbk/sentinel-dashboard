@@ -9,8 +9,10 @@ ADD ./src src/
 RUN mvn install -Dmaven.test.skip=true
 
 From openjdk:8
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # copy jar from the first stage
-COPY --from=builder target/*.jar my-app-1.0-SNAPSHOT.jar
+COPY --from=builder target/sentinel-dashboard.jar /app/app.jar
 EXPOSE 8080
-CMD ["java", "-jar", "my-app-1.0-SNAPSHOT.jar"]
+ENTRYPOINT ["sh","-c","java -server -jar -Duser.timezone=GMT+08 /app/app.jar"]
